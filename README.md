@@ -1,70 +1,176 @@
-# Getting Started with Create React App
+# Критерії приймання
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+- Створений репозиторій `goit-react-hw-03-image-finder`
+- При здачі домашньої роботи є посилання: на вихідні файли та робочу сторінку
+  проектів на `GitHub Pages`.
+- У стані компонентів зберігається мінімально необхідний набір даних, решта
+  обчислюється
+- Під час запуску коду завдання в консолі відсутні помилки та попередження.
+- Для кожного компонента є окрема папка з файлом React-компонента та файлом
+  стилів
+- Для компонентів описані `propTypes`
+- Все, що компонент очікує у вигляді пропсів, передається йому під час виклику.
+- Імена компонентів зрозумілі та описові
+- JS-код чистий і зрозумілий, використовується `Prettier`.
+- Стилізація виконана `CSS-модулями` або `Styled Components`.
 
-## Available Scripts
+## Завдання
 
-In the project directory, you can run:
+# Пошук зображень
 
-### `npm start`
+Напиши застосунок пошуку зображень за ключовим словом. Прев'ю робочого
+застосунку
+[дивись за посиланням](https://drive.google.com/file/d/1oXCGyiq4uKwW0zzraZLKk4lh3voBlBzZ/view?usp=sharing).
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+Створи компоненти `<Searchbar>`, `<ImageGallery>`, `<ImageGalleryItem>`,
+`<Loader>`, `<Button>` і `<Modal>`. Готові стилі компонентів можна взяти у файлі
+[styles.css](./assets/styles.css) і підправити під себе, якщо потрібно.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+![preview](./assets/preview.jpg)
 
-### `npm test`
+## Інструкція Pixabay API
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Для HTTP-запитів використовуй публічний сервіс пошуку зображень
+[Pixabay](https://pixabay.com/api/docs/). Зареєструйся та отримай приватний ключ
+доступу.
 
-### `npm run build`
+URL-рядок HTTP-запиту.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```bash
+https://pixabay.com/api/?q=cat&page=1&key=your_key&image_type=photo&orientation=horizontal&per_page=12
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+Pixabay API підтримує пагінацію, за замовчуванням параметр `page` дорівнює `1`.
+Нехай у відповіді надходить по 12 об'єктів, встановлено в параметрі `per_page`.
+Не забудь, що під час пошуку за новим ключовим словом, необхідно скидати
+значення `page` до `1`.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+У відповіді від апі приходить масив об'єктів, в яких тобі цікаві лише наступні
+властивості.
 
-### `npm run eject`
+- `id` – унікальний ідентифікатор
+- `webformatURL` – посилання на маленьке зображення для списку карток
+- `largeImageURL` – посилання на велике зображення для модального вікна
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+## Опис компонента `<Searchbar>`
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+Компонент приймає один проп `onSubmit` – функцію для передачі значення інпута
+під час сабміту форми. Створює DOM-елемент наступної структури.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+```html
+<header class="searchbar">
+  <form class="form">
+    <button type="submit" class="button">
+      <span class="button-label">Search</span>
+    </button>
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+    <input
+      class="input"
+      type="text"
+      autocomplete="off"
+      autofocus
+      placeholder="Search images and photos"
+    />
+  </form>
+</header>
+```
 
-## Learn More
+## Опис компонента `<ImageGallery>`
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+Список карток зображень. Створює DOM-елемент наступної структури.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+```html
+<ul class="gallery">
+  <!-- Набір <li> із зображеннями -->
+</ul>
+```
 
-### Code Splitting
+## Опис компонента `<ImageGalleryItem>`
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+Компонент елемента списку із зображенням. Створює DOM-елемент наступної
+структури.
 
-### Analyzing the Bundle Size
+```html
+<li class="gallery-item">
+  <img src="" alt="" />
+</li>
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+## Опис компонента `<Button>`
 
-### Making a Progressive Web App
+При натисканні на кнопку `Load more` повинна довантажуватись наступна порція
+зображень і рендеритися разом із попередніми. Кнопка повинна рендеритися лише
+тоді, коли є якісь завантажені зображення. Якщо масив зображень порожній, кнопка
+не рендериться.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+## Опис компонента `<Loader>`
 
-### Advanced Configuration
+Компонент спінера відображається, доки відбувається завантаження зображень.
+Використовуйте будь-який готовий компонент, наприклад
+[react-loader-spinner](https://github.com/mhnpd/react-loader-spinner) або
+будь-який інший.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+## Опис компонента `<Modal>`
 
-### Deployment
+Під час кліку на елемент галереї повинно відкриватися модальне вікно з темним
+оверлеєм і відображатися велика версія зображення. Модальне вікно повинно
+закриватися по натисканню клавіші `ESC` або по кліку на оверлеї.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+Зовнішній вигляд схожий на функціонал цього
+[VanillaJS-плагіна](https://basiclightbox.electerious.com/), тільки замість
+білого модального вікна рендериться зображення (у прикладі натисніть `Run`).
+Анімацію робити не потрібно!
 
-### `npm run build` fails to minify
+```html
+<div class="overlay">
+  <div class="modal">
+    <img src="" alt="" />
+  </div>
+</div>
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+---
+
+npm i axios
+
+import axios from 'axios'
+
+---
+
+npm install @emotion/react @emotion/styled
+
+import styled from '@emotion/styled'
+
+---
+
+npm i nanoid
+
+import { nanoid } from 'nanoid'
+
+---
+
+npm i modern-normalize
+
+import 'modern-normalize'
+
+---
+
+npm install react-loader-spinner --save
+
+import { Audio } from 'react-loader-spinner'
+
+---
+
+npm i react-icons
+
+import { BsSearch } from 'react-icons/bs';
+
+---
+
+npm i react-toastify
+
+import { ToastContainer, toast } from 'react-toastify';
+
+---
+
+API key: '34523545-f21683fd59bfc3e4e2549fe07'
